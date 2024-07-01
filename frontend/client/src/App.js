@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './App.css';
 
 function App() {
   const [oracleSQL, setOracleSQL] = useState('');
@@ -16,18 +17,25 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Oracle to PostgreSQL Converter</h1>
-      <textarea
-        value={oracleSQL}
-        onChange={(e) => setOracleSQL(e.target.value)}
-        placeholder="Enter Oracle SQL here"
-      />
-      <button onClick={handleConvert}>Convert</button>
-      <textarea
-        value={postgresSQL}
-        readOnly
-        placeholder="Converted PostgreSQL will appear here"
-      />
+      <header className="App-header">
+        <h1>SQL Converter Tool</h1>
+        <p>Effortlessly convert Oracle SQL to PostgreSQL</p>
+      </header>
+      <div className="converter-container">
+        <textarea
+          className="input-area"
+          value={oracleSQL}
+          onChange={(e) => setOracleSQL(e.target.value)}
+          placeholder="Enter Oracle SQL here"
+        />
+        <button className="convert-button" onClick={handleConvert}>Convert</button>
+        <textarea
+          className="output-area"
+          value={postgresSQL}
+          readOnly
+          placeholder="Converted PostgreSQL will appear here"
+        />
+      </div>
     </div>
   );
 }
