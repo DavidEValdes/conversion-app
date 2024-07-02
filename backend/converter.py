@@ -26,7 +26,9 @@ def convert_sql(oracle_sql):
             '-i', temp_input_path,
             '-o', temp_output_path,
             '--print_header', '0',
-            '--type', 'QUERY'
+            '--type', 'QUERY',
+            '--no_header',  # Ensures no headers are printed
+            '--comment_header', '0'  # Ensures no comments are printed
         ], check=True, capture_output=True, text=True)
 
         if os.path.exists(temp_output_path):

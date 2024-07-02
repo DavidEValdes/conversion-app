@@ -44,8 +44,8 @@ function App() {
   return (
     <div className="App">
       <h1>Oracle to PostgreSQL Converter</h1>
-      <div className="converter">
-        <div className="panel">
+      <div className="converter-container">
+        <div className="input-area">
           <h2>Oracle SQL</h2>
           <textarea
             value={oracleSQL}
@@ -53,8 +53,8 @@ function App() {
             placeholder="Enter Oracle SQL here"
           />
         </div>
-        <button onClick={handleConvert}>Convert &gt;</button>
-        <div className="panel">
+        <button className="convert-button" onClick={handleConvert}>Convert &gt;</button>
+        <div className="output-area">
           <h2>PostgreSQL</h2>
           <textarea
             value={postgresSQL}
