@@ -27,8 +27,8 @@ def convert_sql(oracle_sql):
             '-o', temp_output_path,
             '--print_header', '0',
             '--type', 'QUERY',
-            '--no_header',  # Ensures no headers are printed
-            '--comment_header', '0'  # Ensures no comments are printed
+            '--no_header',  
+            '--comment_header', '0'  
         ], check=True, capture_output=True, text=True)
 
         if os.path.exists(temp_output_path):
@@ -58,7 +58,7 @@ def validate_postgres_sql(postgres_sql):
     except Exception as e:
         return False, str(e)
 
-# You might want to add a main function for testing purposes
+# I might want to add a main function for testing purposes
 if __name__ == "__main__":
     # Test conversion
     oracle_sql = "SELECT * FROM dual"

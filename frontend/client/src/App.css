@@ -12,7 +12,7 @@
 }
 
 h1 {
-  color: #c00; /* Wells Fargo red */
+  color: #c00;
 }
 
 .converter-container {
@@ -42,7 +42,7 @@ textarea {
 
 .convert-button {
   padding: 10px 20px;
-  background-color: #c00; /* Wells Fargo red */
+  background-color: #c00; 
   color: white;
   font-size: 16px;
   border: none;
