@@ -30,7 +30,7 @@ main {
 .convert-button {
   width: 100%;
   padding: 10px;
-  background-color: #3d98d1;
+  background-color: #007bff;
   color: white;
   border: none;
   cursor: pointer;
@@ -108,4 +108,37 @@ pre {
 .query-description {
   font-style: italic;
   color: #555;
+}
+
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; 
+  font-size: 1.5em;
+  color: #007bff; 
+  font-weight: bold;
+  position: relative; 
+  top: -10vh; 
+}
+
+
+.loading::after {
+  content: ' ';
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 4px solid rgba(0, 123, 255, 0.6);
+  border-top-color: #007bff;
+  animation: spin 1s ease-in-out infinite;
+  margin-left: 10px;
+}
+
+/* Keyframes for spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

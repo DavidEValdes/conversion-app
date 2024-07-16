@@ -7,6 +7,7 @@ function App() {
   const [testQueries, setTestQueries] = useState([]);
   const [selectedQueries, setSelectedQueries] = useState([]);
   const [convertedQueries, setConvertedQueries] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetch('http://localhost:3000/health')
@@ -23,6 +24,7 @@ function App() {
   const handleConvert = async () => {
     try {
       setError(null);
+      setIsLoading(true); // Set loading state to true
       const queriesToConvert = selectedQueries.map(id => testQueries.find(q => q.id === parseInt(id)).oracle_sql);
 
       const response = await fetch('http://localhost:3000/convert', {
@@ -44,6 +46,8 @@ function App() {
     } catch (error) {
       console.error('Conversion error:', error);
       setError(error.message);
+    } finally {
+      setIsLoading(false); // Set loading state to false
     }
   };
 
@@ -90,32 +94,36 @@ function App() {
         </div>
         <div className="results-area">
           <h2>Conversion Results</h2>
-          {conversionResults.map((result, index) => {
-            const query = testQueries.find(q => q.id === parseInt(convertedQueries[index]));
-            return (
-              <div key={index} className="conversion-result">
-                <h3>Query {convertedQueries[index]}</h3>
-                {query && <p className="query-description">{query.description}</p>}
-                <div className="sql-display">
-                  <div className="sql-column">
-                    <h4>Oracle SQL:</h4>
-                    <pre>{result.oracle_sql}</pre>
+          {isLoading ? (
+            <div className="loading">Loading...</div>
+          ) : (
+            conversionResults.map((result, index) => {
+              const query = testQueries.find(q => q.id === parseInt(convertedQueries[index]));
+              return (
+                <div key={index} className="conversion-result">
+                  <h3>Query {convertedQueries[index]}</h3>
+                  {query && <p className="query-description">{query.description}</p>}
+                  <div className="sql-display">
+                    <div className="sql-column">
+                      <h4>Oracle SQL:</h4>
+                      <pre>{result.oracle_sql}</pre>
+                    </div>
+                    <div className="sql-column">
+                      <h4>PostgreSQL:</h4>
+                      <pre>{result.postgres_sql}</pre>
+                    </div>
                   </div>
-                  <div className="sql-column">
-                    <h4>PostgreSQL:</h4>
-                    <pre>{result.postgres_sql}</pre>
+                  <div className={`validation ${result.validation_result.includes('SQL is valid') ? 'valid' : 'invalid'}`}>
+                    {result.validation_result.includes('SQL is valid') ? 'VALID SQL' : 'Invalid SQL'}
+                  </div>
+                  <div className="validation-result">
+                    <h4>Validation Result:</h4>
+                    <pre>{result.validation_result.replace(/^Execution error: {'message': /, '').replace(/'}$/, '').replace(/'/g, '')}</pre>
                   </div>
                 </div>
-                <div className={`validation ${result.validation_result.includes('SQL is valid') ? 'valid' : 'invalid'}`}>
-                  {result.validation_result.includes('SQL is valid') ? 'VALID SQL' : 'Invalid SQL'}
-                </div>
-                <div className="validation-result">
-                  <h4>Validation Result:</h4>
-                  <pre>{result.validation_result.replace(/^Execution error: {'message': /, '').replace(/'}$/, '').replace(/'/g, '')}</pre>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </main>
       {error && <div className="error">Error: {error}</div>}
