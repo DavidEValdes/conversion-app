@@ -6,6 +6,7 @@ function App() {
   const [error, setError] = useState(null);
   const [testQueries, setTestQueries] = useState([]);
   const [selectedQueries, setSelectedQueries] = useState([]);
+  const [convertedQueries, setConvertedQueries] = useState([]);
 
   useEffect(() => {
     fetch('http://localhost:3000/health')
@@ -39,6 +40,7 @@ function App() {
       
       const data = await response.json();
       setConversionResults(data);
+      setConvertedQueries(selectedQueries);  // Update the converted queries
     } catch (error) {
       console.error('Conversion error:', error);
       setError(error.message);
@@ -89,10 +91,10 @@ function App() {
         <div className="results-area">
           <h2>Conversion Results</h2>
           {conversionResults.map((result, index) => {
-            const query = testQueries.find(q => q.id === parseInt(selectedQueries[index]));
+            const query = testQueries.find(q => q.id === parseInt(convertedQueries[index]));
             return (
               <div key={index} className="conversion-result">
-                <h3>Query {selectedQueries[index]}</h3>
+                <h3>Query {convertedQueries[index]}</h3>
                 {query && <p className="query-description">{query.description}</p>}
                 <div className="sql-display">
                   <div className="sql-column">
