@@ -1,6 +1,6 @@
 # Oracle 2 Postgres Conversion Dashboard
 
-This web app: **Uses "Ora2PG" to convert Oracle to Postgresql code, taking advantage of Supabase to validate through prepare query**
+This web app: **Uses "Ora2PG" to convert Oracle to Postgresql code, uses Supabase to validate and return invalid or valid**
 
 
 ![Screen Recording 2024-07-16 at 6 05 15 PM](https://github.com/user-attachments/assets/7259e4d7-451b-43d7-bdeb-a4befb7dc6b9)
