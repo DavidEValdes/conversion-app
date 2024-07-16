@@ -1,63 +1,86 @@
 .App {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  text-align: center;
-  color: #333;
-  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 20px;
-  height: 100vh;
+}
+
+header {
+  background-color: #f0f0f0;
+  padding: 20px;
+  text-align: center;
+}
+
+main {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  margin-top: 20px;
 }
 
-h1 {
-  color: #c00;
+.query-selector {
+  flex: 0 0 300px;
+  margin-right: 20px;
 }
 
-.converter-container {
+.query-selector select {
   width: 100%;
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.input-area, .output-area {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-textarea {
-  width: 100%;
-  height: 150px;
-  padding: 15px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  
+  height: 300px;
+  margin-bottom: 10px;
 }
 
 .convert-button {
-  padding: 10px 20px;
-  background-color: #c00; 
+  width: 100%;
+  padding: 10px;
+  background-color: #3d98d1;
   color: white;
-  font-size: 16px;
   border: none;
-  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s;
 }
 
-.convert-button:hover {
-  background-color: #a00;
+.convert-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.results-area {
+  flex: 1;
+}
+
+.conversion-result {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.sql-display {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.sql-column {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.sql-column:last-child {
+  margin-right: 0;
+}
+
+.sql-column h4 {
+  margin-top: 0;
+}
+
+pre {
+  background-color: #f0f0f0;
+  padding: 10px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .validation {
-  margin-top: 10px;
   font-weight: bold;
+  margin: 10px 0;
 }
 
 .valid {
@@ -68,20 +91,21 @@ textarea {
   color: red;
 }
 
-.validation-result {
-  margin-top: 10px;
-  text-align: left;
-}
-
-pre {
-  background-color: #f0f0f0;
-  padding: 10px;
-  border-radius: 5px;
-  overflow-x: auto;
-}
-
 .error {
-  margin-top: 20px;
   color: red;
   font-weight: bold;
+  margin-top: 20px;
+}
+
+.dashboard {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.query-description {
+  font-style: italic;
+  color: #555;
 }

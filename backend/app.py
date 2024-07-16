@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from converter import convert_sql, validate_postgres_sql
+from converter import convert_sql, validate_postgres_sql, load_test_queries
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -16,23 +16,33 @@ def convert():
     if request.method == "OPTIONS":
         return jsonify({"status": "OK"}), 200
     data = request.json
-    oracle_sql = data.get('oracle_sql', '')
+    oracle_sql_list = data.get('oracle_sql_list', [])
     
-    # Convert Oracle SQL to PostgreSQL
-    postgres_sql = convert_sql(oracle_sql)
+    results = []
+    for oracle_sql in oracle_sql_list:
+        # Convert Oracle SQL to PostgreSQL
+        postgres_sql = convert_sql(oracle_sql)
+        
+        # Validate the converted SQL against Supabase
+        validation_result = validate_postgres_sql(postgres_sql)
+        
+        results.append({
+            'oracle_sql': oracle_sql,
+            'postgres_sql': postgres_sql,
+            'is_valid': validation_result['is_valid'],
+            'validation_result': validation_result['message']
+        })
     
-    # Validate the converted SQL against Supabase
-    is_valid, validation_result = validate_postgres_sql(postgres_sql)
-    
-    return jsonify({
-        'postgres_sql': postgres_sql,
-        'is_valid': is_valid,
-        'validation_result': validation_result
-    })
+    return jsonify(results)
 
 @app.route('/health', methods=['GET'])
 def health_check():
     return jsonify({'status': 'healthy'}), 200
+
+@app.route('/test-queries', methods=['GET'])
+def get_test_queries():
+    queries = load_test_queries()
+    return jsonify(queries)
 
 if __name__ == '__main__':
     app.run(debug=True, port=3000)
