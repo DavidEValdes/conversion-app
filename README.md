@@ -1,14 +1,34 @@
 # Oracle 2 Postgres Conversion Dashboard
 
-This web app: **Uses "Ora2PG" to convert Oracle to Postgresql code, uses Supabase to validate and return invalid or valid**
+This web app: **Uses "Ora2PG" to convert Oracle to Postgresql code, uses Supabase to validate and return invalid or valid repsonse**
 
 
 ![Screen Recording 2024-07-16 at 6 05 15 PM](https://github.com/user-attachments/assets/7259e4d7-451b-43d7-bdeb-a4befb7dc6b9)
 
 
+## Supabase function used for validation
 
+```
+DECLARE
+  result JSONB;
+  ddl_keywords TEXT[] := ARRAY['CREATE', 'ALTER', 'DROP', 'TRUNCATE'];
+BEGIN
+  IF EXISTS (SELECT 1 FROM unnest(ddl_keywords) keyword WHERE sql_query ILIKE keyword || '%') THEN
+    result := jsonb_build_object('message', 'DDL statement - assumed valid');
+  ELSE
+    BEGIN
+      EXECUTE 'PREPARE test_stmt AS ' || sql_query;
+      result := jsonb_build_object('message', 'SQL is valid');
+      EXECUTE 'DEALLOCATE test_stmt';
+    EXCEPTION WHEN OTHERS THEN
+      result := jsonb_build_object('error', SQLERRM);
+    END;
+  END IF;
 
+  RETURN COALESCE(result, jsonb_build_object('error', 'No result generated'));
+END;
 
+```
 
 ## License
 
