@@ -1,0 +1,504 @@
+{
+    "queries": [
+      {
+        "id": 1,
+        "description": "Simple SELECT",
+        "oracle_sql": "SELECT * FROM employees WHERE department_id = 10;"
+      },
+      {
+        "id": 2,
+        "description": "JOIN query",
+        "oracle_sql": "SELECT e.employee_id, e.first_name, d.department_name FROM employees e JOIN departments d ON e.department_id = d.department_id;"
+      },
+      {
+        "id": 3,
+        "description": "CASE statement",
+        "oracle_sql": "SELECT employee_id, salary, CASE WHEN salary < 5000 THEN 'Low' WHEN salary BETWEEN 5000 AND 10000 THEN 'Medium' ELSE 'High' END AS salary_category FROM employees;"
+      },
+      {
+        "id": 4,
+        "description": "GROUP BY with HAVING",
+        "oracle_sql": "SELECT department_id, AVG(salary) FROM employees GROUP BY department_id HAVING AVG(salary) > 5000;"
+      },
+      {
+        "id": 5,
+        "description": "Window function",
+        "oracle_sql": "SELECT employee_id, first_name, last_name, RANK() OVER (ORDER BY salary DESC) AS salary_rank FROM employees;"
+      },
+      {
+        "id": 6,
+        "description": "INSERT with sequence",
+        "oracle_sql": "INSERT INTO employees (employee_id, first_name, last_name, email, hire_date, job_id) VALUES (employees_seq.NEXTVAL, 'John', 'Doe', 'jdoe@example.com', SYSDATE, 'IT_PROG');"
+      },
+      {
+        "id": 7,
+        "description": "UPDATE with subquery",
+        "oracle_sql": "UPDATE employees SET salary = salary * 1.1 WHERE department_id IN (SELECT department_id FROM departments WHERE location_id = 1700);"
+      },
+      {
+        "id": 8,
+        "description": "DELETE with date function",
+        "oracle_sql": "DELETE FROM employees WHERE hire_date < ADD_MONTHS(SYSDATE, -120);"
+      },
+      {
+        "id": 9,
+        "description": "CREATE TABLE AS SELECT",
+        "oracle_sql": "CREATE TABLE temp_employees AS SELECT * FROM employees WHERE 1=2;"
+      },
+      {
+        "id": 10,
+        "description": "ALTER TABLE",
+        "oracle_sql": "ALTER TABLE employees ADD (bonus NUMBER(8,2));"
+      },
+      {
+        "id": 11,
+        "description": "CREATE INDEX",
+        "oracle_sql": "CREATE INDEX idx_emp_name ON employees(last_name, first_name);"
+      },
+      {
+        "id": 12,
+        "description": "CREATE VIEW",
+        "oracle_sql": "CREATE OR REPLACE VIEW high_salary_employees AS SELECT * FROM employees WHERE salary > 10000;"
+      },
+      {
+        "id": 13,
+        "description": "NVL function",
+        "oracle_sql": "SELECT employee_id, NVL(commission_pct, 0) AS commission FROM employees;"
+      },
+      {
+        "id": 14,
+        "description": "DISTINCT keyword",
+        "oracle_sql": "SELECT DISTINCT department_id FROM employees;"
+      },
+      {
+        "id": 15,
+        "description": "LAG function",
+        "oracle_sql": "SELECT employee_id, salary, LAG(salary) OVER (ORDER BY hire_date) AS previous_salary FROM employees;"
+      },
+      {
+        "id": 16,
+        "description": "Cumulative sum",
+        "oracle_sql": "SELECT department_id, COUNT(*) OVER (ORDER BY department_id) AS running_total FROM employees;"
+      },
+      {
+        "id": 17,
+        "description": "ROW_NUMBER function",
+        "oracle_sql": "SELECT employee_id, first_name, last_name, ROW_NUMBER() OVER (PARTITION BY department_id ORDER BY salary DESC) AS dept_salary_rank FROM employees;"
+      },
+      {
+        "id": 18,
+        "description": "LISTAGG function",
+        "oracle_sql": "SELECT LISTAGG(last_name, ', ') WITHIN GROUP (ORDER BY hire_date) AS employees FROM employees WHERE department_id = 30;"
+      },
+      {
+        "id": 19,
+        "description": "ADD_MONTHS function",
+        "oracle_sql": "SELECT employee_id, hire_date, ADD_MONTHS(hire_date, 6) AS probation_end_date FROM employees;"
+      },
+      {
+        "id": 20,
+        "description": "PERCENTILE_CONT function",
+        "oracle_sql": "SELECT employee_id, salary, PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary) OVER () AS median_salary FROM employees;"
+      },
+      {
+        "id": 21,
+        "description": "PL/SQL block with cursor",
+        "oracle_sql": "BEGIN FOR r IN (SELECT employee_id FROM employees WHERE department_id = 10) LOOP UPDATE employees SET salary = salary * 1.1 WHERE employee_id = r.employee_id; END LOOP; END;"
+      },
+      {
+        "id": 22,
+        "description": "CREATE FUNCTION",
+        "oracle_sql": "CREATE OR REPLACE FUNCTION get_employee_salary(p_emp_id NUMBER) RETURN NUMBER IS v_salary NUMBER; BEGIN SELECT salary INTO v_salary FROM employees WHERE employee_id = p_emp_id; RETURN v_salary; EXCEPTION WHEN NO_DATA_FOUND THEN RETURN NULL; END;"
+      },
+      {
+        "id": 23,
+        "description": "FIRST_VALUE function",
+        "oracle_sql": "SELECT employee_id, salary, FIRST_VALUE(salary) OVER (ORDER BY hire_date) AS first_hired_salary FROM employees;"
+      },
+      {
+        "id": 24,
+        "description": "LISTAGG with multiple columns",
+        "oracle_sql": "SELECT department_id, LISTAGG(first_name || ' ' || last_name, '; ') WITHIN GROUP (ORDER BY hire_date) AS employees FROM employees GROUP BY department_id;"
+      },
+      {
+        "id": 25,
+        "description": "Salary increase calculation",
+        "oracle_sql": "SELECT employee_id, salary, salary - LAG(salary) OVER (ORDER BY hire_date) AS salary_increase FROM employees;"
+      },
+      {
+        "id": 26,
+        "description": "MERGE statement",
+        "oracle_sql": "MERGE INTO bonuses b USING (SELECT employee_id, salary, department_id FROM employees) e ON (b.employee_id = e.employee_id) WHEN MATCHED THEN UPDATE SET b.bonus = e.salary * 0.1 WHEN NOT MATCHED THEN INSERT (b.employee_id, b.bonus) VALUES (e.employee_id, e.salary * 0.05) WHERE e.department_id = 80;"
+      },
+      {
+        "id": 27,
+        "description": "NEXT_DAY function",
+        "oracle_sql": "SELECT employee_id, hire_date, NEXT_DAY(hire_date, 'FRIDAY') AS next_friday_after_hire FROM employees;"
+      },
+      {
+        "id": 28,
+        "description": "NTILE function",
+        "oracle_sql": "SELECT employee_id, salary, NTILE(4) OVER (ORDER BY salary) AS salary_quartile FROM employees;"
+      },
+      {
+        "id": 29,
+        "description": "AVG with OVER clause",
+        "oracle_sql": "SELECT employee_id, job_id, salary, AVG(salary) OVER (PARTITION BY job_id) AS avg_job_salary FROM employees;"
+      },
+      {
+        "id": 30,
+        "description": "EXTRACT function",
+        "oracle_sql": "SELECT EXTRACT(YEAR FROM hire_date) AS hire_year, COUNT(*) AS num_employees FROM employees GROUP BY EXTRACT(YEAR FROM hire_date) ORDER BY hire_year;"
+      },
+      {
+        "id": 31,
+        "description": "CREATE PROCEDURE",
+        "oracle_sql": "CREATE OR REPLACE PROCEDURE increase_salary(p_emp_id IN NUMBER, p_percent IN NUMBER) IS BEGIN UPDATE employees SET salary = salary * (1 + p_percent/100) WHERE employee_id = p_emp_id; COMMIT; EXCEPTION WHEN OTHERS THEN ROLLBACK; RAISE; END;"
+      },
+      {
+        "id": 32,
+        "description": "Hierarchical query",
+        "oracle_sql": "SELECT employee_id, first_name, last_name, CONNECT_BY_ROOT last_name AS top_manager, LEVEL as hierarchy_level FROM employees START WITH manager_id IS NULL CONNECT BY PRIOR employee_id = manager_id;"
+      },
+      {
+        "id": 33,
+        "description": "TO_CHAR function",
+        "oracle_sql": "SELECT employee_id, TO_CHAR(hire_date, 'YYYY-MM-DD') AS formatted_hire_date FROM employees;"
+      },
+      {
+        "id": 34,
+        "description": "CUBE operator",
+        "oracle_sql": "SELECT department_id, job_id, COUNT(*) AS employee_count FROM employees GROUP BY CUBE(department_id, job_id);"
+      },
+      {
+        "id": 35,
+        "description": "CUME_DIST function",
+        "oracle_sql": "SELECT employee_id, salary, CUME_DIST() OVER (ORDER BY salary) AS salary_percentile FROM employees;"
+      },
+      {
+        "id": 36,
+        "description": "CREATE TRIGGER",
+        "oracle_sql": "CREATE OR REPLACE TRIGGER emp_audit_trg AFTER INSERT OR UPDATE OR DELETE ON employees FOR EACH ROW BEGIN IF INSERTING THEN INSERT INTO emp_history VALUES (:NEW.employee_id, SYSDATE, 'INSERT', 'New employee added'); ELSIF UPDATING THEN INSERT INTO emp_history VALUES (:OLD.employee_id, SYSDATE, 'UPDATE', 'Employee details updated'); ELSIF DELETING THEN INSERT INTO emp_history VALUES (:OLD.employee_id, SYSDATE, 'DELETE', 'Employee removed'); END IF; END;"
+      },
+      {
+        "id": 37,
+        "description": "REGEXP_REPLACE function",
+        "oracle_sql": "SELECT employee_id, first_name, last_name, REGEXP_REPLACE(phone_number, '\\.', '-') AS formatted_phone FROM employees;"
+      },
+      {
+        "id": 38,
+        "description": "RATIO_TO_REPORT function",
+        "oracle_sql": "SELECT employee_id, salary, RATIO_TO_REPORT(salary) OVER () AS salary_ratio FROM employees;"
+      },
+      {
+        "id": 39,
+        "description": "WITH clause (Common Table Expression)",
+        "oracle_sql": "WITH dept_costs AS (SELECT department_id, SUM(salary) AS dept_total FROM employees GROUP BY department_id) SELECT e.employee_id, e.salary, e.department_id, e.salary / dc.dept_total AS salary_ratio FROM employees e JOIN dept_costs dc ON e.department_id = dc.department_id;"
+      },
+      {
+        "id": 40,
+        "description": "Conditional COUNT",
+        "oracle_sql": "SELECT department_id, COUNT(*) AS total_employees, COUNT(CASE WHEN salary > 5000 THEN 1 END) AS high_salary_count FROM employees GROUP BY department_id;"
+      },
+      {
+        "id": 41,
+        "description": "CREATE PACKAGE",
+        "oracle_sql": "CREATE OR REPLACE PACKAGE emp_mgmt AS PROCEDURE hire_employee(p_first_name VARCHAR2, p_last_name VARCHAR2, p_job_id VARCHAR2); FUNCTION get_employee_salary(p_emp_id NUMBER) RETURN NUMBER; END emp_mgmt;"
+      },
+      {
+        "id": 42,
+        "description": "DENSE_RANK function",
+        "oracle_sql": "SELECT employee_id, salary, DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) AS dept_salary_rank FROM employees;"
+      },
+      {
+        "id": 43,
+        "description": "MONTHS_BETWEEN function",
+        "oracle_sql": "SELECT employee_id, hire_date, MONTHS_BETWEEN(SYSDATE, hire_date) AS months_employed FROM employees;"
+      },
+      {
+        "id": 44,
+        "description": "DECODE function",
+        "oracle_sql": "SELECT DECODE(job_id, 'IT_PROG', 'Information Technology', 'SA_REP', 'Sales Representative', 'ST_CLERK', 'Stock Clerk', 'Other') AS job_category, COUNT(*) AS employee_count FROM employees GROUP BY DECODE(job_id, 'IT_PROG', 'Information Technology', 'SA_REP', 'Sales Representative', 'ST_CLERK', 'Stock Clerk', 'Other');"
+      },
+      {
+        "id": 45,
+        "description": "CREATE TYPE",
+        "oracle_sql": "CREATE OR REPLACE TYPE address_type AS OBJECT (street VARCHAR2(50), city VARCHAR2(30), state VARCHAR2(2), zip VARCHAR2(10));"
+      },
+      {
+        "id": 46,
+        "description": "XMLELEMENT function",
+        "oracle_sql": "SELECT employee_id, XMLELEMENT(\"Employee\", XMLATTRIBUTES(employee_id AS \"id\"), XMLELEMENT(\"Name\", first_name || ' ' || last_name), XMLELEMENT(\"Salary\", salary)) AS employee_xml FROM employees WHERE ROWNUM <= 5;"
+      },
+      {
+        "id": 47,
+        "description": "KEEP function",
+        "oracle_sql": "SELECT department_id, SUM(salary) KEEP (DENSE_RANK FIRST ORDER BY hire_date) AS earliest_employee_salary FROM employees GROUP BY department_id;"
+      },
+      {
+        "id": 48,
+        "description": "CREATE MATERIALIZED VIEW",
+        "oracle_sql": "CREATE MATERIALIZED VIEW mv_dept_salary_stats REFRESH COMPLETE ON DEMAND AS SELECT department_id, AVG(salary) AS avg_salary, MAX(salary) AS max_salary, MIN(salary) AS min_salary FROM employees GROUP BY department_id;"
+      },
+      {
+        "id": 49,
+        "description": "WIDTH_BUCKET function",
+        "oracle_sql": "SELECT employee_id, salary, WIDTH_BUCKET(salary, 1000, 20000, 5) AS salary_bracket FROM employees;"
+      },
+      {
+        "id": 50,
+        "description": "CREATE GLOBAL TEMPORARY TABLE",
+        "oracle_sql": "CREATE GLOBAL TEMPORARY TABLE temp_projects (project_id NUMBER, project_name VARCHAR2(100), start_date DATE) ON COMMIT PRESERVE ROWS;"
+      },
+      {
+        "id": 51,
+        "description": "CAST function",
+        "oracle_sql": "SELECT employee_id, first_name, last_name, CAST(hire_date AS TIMESTAMP) AS hire_timestamp FROM employees;"
+      },
+      {
+        "id": 52,
+        "description": "CREATE SEQUENCE",
+        "oracle_sql": "CREATE SEQUENCE dept_seq START WITH 1 INCREMENT BY 10 MAXVALUE 100 CYCLE CACHE 2;"
+      },
+      {
+        "id": 53,
+        "description": "ROLLUP operator",
+        "oracle_sql": "SELECT department_id, AVG(salary) AS avg_salary, GROUPING(department_id) AS is_subtotal FROM employees GROUP BY ROLLUP(department_id);"
+      },
+      {
+        "id": 54,
+        "description": "User-defined function",
+        "oracle_sql": "CREATE OR REPLACE FUNCTION get_years_of_service(p_hire_date DATE) RETURN NUMBER IS BEGIN RETURN TRUNC(MONTHS_BETWEEN(SYSDATE, p_hire_date) / 12); END;"
+      },
+      {
+        "id": 55,
+        "description": "LEAD function",
+        "oracle_sql": "SELECT employee_id, salary, LEAD(salary, 1, 0) OVER (ORDER BY salary) - salary AS salary_gap FROM employees;"
+      },
+      {
+        "id": 56,
+        "description": "Function-based index",
+        "oracle_sql": "CREATE INDEX emp_name_idx ON employees (UPPER(last_name), UPPER(first_name));"
+      },
+      {
+        "id": 57,
+        "description": "RANK with PARTITION",
+        "oracle_sql": "SELECT employee_id, job_id, salary, RANK() OVER (PARTITION BY job_id ORDER BY salary DESC) AS job_salary_rank FROM employees;"
+      },
+      {
+        "id": 58,
+        "description": "Complex procedure",
+        "oracle_sql": "CREATE OR REPLACE PROCEDURE transfer_employee(p_emp_id IN NUMBER, p_new_dept_id IN NUMBER, p_new_job_id IN VARCHAR2) IS BEGIN UPDATE employees SET department_id = p_new_dept_id, job_id = p_new_job_id WHERE employee_id = p_emp_id; INSERT INTO job_history (employee_id, start_date, end_date, job_id, department_id) SELECT employee_id, hire_date, SYSDATE, job_id, department_id FROM employees WHERE employee_id = p_emp_id; COMMIT; EXCEPTION WHEN OTHERS THEN ROLLBACK; RAISE; END;"
+      },
+      {
+        "id": 59,
+        "description": "PERCENTILE_DISC function",
+        "oracle_sql": "SELECT employee_id, salary, PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY salary) OVER (PARTITION BY department_id) AS median_dept_salary FROM employees;"
+      },
+      {
+        "id": 60,
+        "description": "CREATE TYPE with member function",
+        "oracle_sql": "CREATE OR REPLACE TYPE employee_type AS OBJECT (employee_id NUMBER, first_name VARCHAR2(50), last_name VARCHAR2(50), email VARCHAR2(100), phone_number VARCHAR2(20), hire_date DATE, job_id VARCHAR2(10), salary NUMBER, commission_pct NUMBER, manager_id NUMBER, department_id NUMBER);"
+      },
+      {
+        "id": 61,
+        "description": "Complex LISTAGG",
+        "oracle_sql": "SELECT department_id, LISTAGG(first_name || ' ' || last_name, ', ') WITHIN GROUP (ORDER BY salary DESC) AS top_earners FROM (SELECT department_id, first_name, last_name, salary, ROW_NUMBER() OVER (PARTITION BY department_id ORDER BY salary DESC) AS salary_rank FROM employees) WHERE salary_rank <= 3 GROUP BY department_id;"
+      },
+      {
+        "id": 62,
+        "description": "Recursive function",
+        "oracle_sql": "CREATE OR REPLACE FUNCTION get_manager_chain(p_emp_id IN NUMBER) RETURN VARCHAR2 IS v_manager_chain VARCHAR2(4000); v_current_id NUMBER := p_emp_id; BEGIN WHILE v_current_id IS NOT NULL LOOP SELECT v_manager_chain || '/' || first_name || ' ' || last_name, manager_id INTO v_manager_chain, v_current_id FROM employees WHERE employee_id = v_current_id; END LOOP; RETURN LTRIM(v_manager_chain, '/'); END;"
+      },
+      {
+        "id": 63,
+        "description": "MEDIAN with window function",
+        "oracle_sql": "SELECT employee_id, salary, MEDIAN(salary) OVER (ORDER BY hire_date ROWS BETWEEN 2 PRECEDING AND 2 FOLLOWING) AS rolling_median_salary FROM employees;"
+      },
+      {
+        "id": 64,
+        "description": "Trigger with conditional logic",
+        "oracle_sql": "CREATE OR REPLACE TRIGGER employees_audit_trg AFTER INSERT OR UPDATE OR DELETE ON employees FOR EACH ROW BEGIN INSERT INTO audit_log (table_name, action, user_name, action_date) VALUES ('EMPLOYEES', CASE WHEN INSERTING THEN 'INSERT' WHEN UPDATING THEN 'UPDATE' WHEN DELETING THEN 'DELETE' END, USER, SYSTIMESTAMP); END;"
+      },
+      {
+        "id": 65,
+        "description": "Hierarchical query with SYS_CONNECT_BY_PATH",
+        "oracle_sql": "SELECT employee_id, first_name, last_name, SYS_CONNECT_BY_PATH(last_name, '/') AS employee_path FROM employees START WITH manager_id IS NULL CONNECT BY PRIOR employee_id = manager_id;"
+      },
+      {
+        "id": 66,
+        "description": "Function with DETERMINISTIC keyword",
+        "oracle_sql": "CREATE OR REPLACE FUNCTION calculate_bonus(p_salary IN NUMBER, p_years_of_service IN NUMBER) RETURN NUMBER DETERMINISTIC IS BEGIN RETURN CASE WHEN p_years_of_service < 5 THEN p_salary * 0.05 WHEN p_years_of_service BETWEEN 5 AND 10 THEN p_salary * 0.10 ELSE p_salary * 0.15 END; END;"
+      },
+      {
+        "id": 67,
+        "description": "GROUPING SETS",
+        "oracle_sql": "SELECT department_id, job_id, AVG(salary) AS avg_salary FROM employees GROUP BY GROUPING SETS ((department_id), (job_id), (department_id, job_id));"
+      },
+      {
+        "id": 68,
+        "description": "Package with procedure and function",
+        "oracle_sql": "CREATE OR REPLACE PACKAGE salary_admin AS PROCEDURE apply_salary_increase(p_increase_percent IN NUMBER); FUNCTION get_total_salary_budget RETURN NUMBER; END salary_admin;"
+      },
+      {
+        "id": 69,
+        "description": "STDDEV with window function",
+        "oracle_sql": "SELECT employee_id, salary, STDDEV(salary) OVER (ORDER BY hire_date ROWS BETWEEN 3 PRECEDING AND 3 FOLLOWING) AS salary_stddev FROM employees;"
+      },
+      {
+        "id": 70,
+        "description": "Create table with user-defined type",
+        "oracle_sql": "CREATE TABLE employee_addresses (employee_id NUMBER PRIMARY KEY, address address_type);"
+      },
+      {
+        "id": 71,
+        "description": "COALESCE in a join",
+        "oracle_sql": "SELECT e.employee_id, e.first_name, e.last_name, COALESCE(m.first_name || ' ' || m.last_name, 'Top Manager') AS manager_name FROM employees e LEFT JOIN employees m ON e.manager_id = m.employee_id;"
+      },
+      {
+        "id": 72,
+        "description": "Function returning SYS_REFCURSOR",
+        "oracle_sql": "CREATE OR REPLACE FUNCTION get_employee_details(p_emp_id IN NUMBER) RETURN SYS_REFCURSOR IS v_cursor SYS_REFCURSOR; BEGIN OPEN v_cursor FOR SELECT e.*, d.department_name FROM employees e JOIN departments d ON e.department_id = d.department_id WHERE e.employee_id = p_emp_id; RETURN v_cursor; END;"
+      },
+      {
+        "id": 73,
+        "description": "CUBE with GROUPING_ID",
+        "oracle_sql": "SELECT department_id, job_id, AVG(salary) AS avg_salary, GROUPING_ID(department_id, job_id) AS grouping_level FROM employees GROUP BY CUBE(department_id, job_id);"
+      },
+      {
+        "id": 74,
+        "description": "Procedure with exception handling",
+        "oracle_sql": "CREATE OR REPLACE PROCEDURE update_employee_salary(p_emp_id IN NUMBER, p_new_salary IN NUMBER) IS v_old_salary employees.salary%TYPE; BEGIN SELECT salary INTO v_old_salary FROM employees WHERE employee_id = p_emp_id; UPDATE employees SET salary = p_new_salary WHERE employee_id = p_emp_id; INSERT INTO salary_changes (employee_id, change_date, old_salary, new_salary) VALUES (p_emp_id, SYSDATE, v_old_salary, p_new_salary); COMMIT; EXCEPTION WHEN NO_DATA_FOUND THEN RAISE_APPLICATION_ERROR(-20001, 'Employee not found'); WHEN OTHERS THEN ROLLBACK; RAISE; END;"
+      },
+      {
+        "id": 75,
+        "description": "NTILE function",
+        "oracle_sql": "SELECT employee_id, salary, NTILE(5) OVER (ORDER BY salary) AS salary_quintile FROM employees;"
+      },
+      {
+        "id": 76,
+        "description": "Complex view",
+        "oracle_sql": "CREATE OR REPLACE VIEW emp_dept_summary AS SELECT d.department_id, d.department_name, COUNT(e.employee_id) AS employee_count, AVG(e.salary) AS avg_salary, MIN(e.hire_date) AS earliest_hire_date FROM departments d LEFT JOIN employees e ON d.department_id = e.department_id GROUP BY d.department_id, d.department_name;"
+      },
+      {
+        "id": 77,
+        "description": "Date manipulation",
+        "oracle_sql": "SELECT employee_id, hire_date, ADD_MONTHS(TRUNC(hire_date, 'YEAR'), 12) - 1 AS first_year_end FROM employees;"
+      },
+      {
+        "id": 78,
+        "description": "Trigger to prevent salary decrease",
+        "oracle_sql": "CREATE OR REPLACE TRIGGER prevent_salary_decrease BEFORE UPDATE OF salary ON employees FOR EACH ROW BEGIN IF :NEW.salary < :OLD.salary THEN RAISE_APPLICATION_ERROR(-20002, 'Salary cannot be decreased'); END IF; END;"
+      },
+      {
+        "id": 79,
+        "description": "REGEXP_SUBSTR function",
+        "oracle_sql": "SELECT employee_id, first_name, last_name, REGEXP_SUBSTR(email, '[^@]+') AS username FROM employees;"
+      },
+      {
+        "id": 80,
+        "description": "Function with NVL",
+        "oracle_sql": "CREATE OR REPLACE FUNCTION get_department_budget(p_dept_id IN NUMBER) RETURN NUMBER IS v_budget NUMBER; BEGIN SELECT SUM(salary) INTO v_budget FROM employees WHERE department_id = p_dept_id; RETURN NVL(v_budget, 0); END;"
+      },
+      {
+        "id": 81,
+        "description": "LAG and LEAD together",
+        "oracle_sql": "SELECT employee_id, salary, LAG(salary) OVER (ORDER BY hire_date) AS prev_salary, LEAD(salary) OVER (ORDER BY hire_date) AS next_salary FROM employees;"
+      },
+      {
+        "id": 82,
+        "description": "Create table with composite primary key",
+        "oracle_sql": "CREATE TABLE employee_skills (employee_id NUMBER, skill VARCHAR2(50), proficiency VARCHAR2(20), CONSTRAINT pk_emp_skills PRIMARY KEY (employee_id, skill));"
+      },
+      {
+        "id": 83,
+        "description": "LISTAGG with ROW_NUMBER",
+        "oracle_sql": "SELECT department_id, LISTAGG(employee_id, ',') WITHIN GROUP (ORDER BY salary DESC) AS top_earners FROM (SELECT department_id, employee_id, salary, ROW_NUMBER() OVER (PARTITION BY department_id ORDER BY salary DESC) AS salary_rank FROM employees) WHERE salary_rank <= 3 GROUP BY department_id;"
+      },
+      {
+        "id": 84,
+        "description": "Procedure with SQL%ROWCOUNT",
+        "oracle_sql": "CREATE OR REPLACE PROCEDURE transfer_employees(p_from_dept IN NUMBER, p_to_dept IN NUMBER) IS BEGIN UPDATE employees SET department_id = p_to_dept WHERE department_id = p_from_dept; IF SQL%ROWCOUNT = 0 THEN RAISE_APPLICATION_ERROR(-20003, 'No employees transferred'); ELSE DBMS_OUTPUT.PUT_LINE(SQL%ROWCOUNT || ' employees transferred'); END IF; COMMIT; EXCEPTION WHEN OTHERS THEN ROLLBACK; RAISE; END;"
+      },
+      {
+        "id": 85,
+        "description": "CUME_DIST function",
+        "oracle_sql": "SELECT employee_id, salary, CUME_DIST() OVER (ORDER BY salary) AS salary_percentile FROM employees;"
+      },
+      {
+        "id": 86,
+        "description": "Object type with member function",
+        "oracle_sql": "CREATE OR REPLACE TYPE employee_type AS OBJECT (employee_id NUMBER, first_name VARCHAR2(50), last_name VARCHAR2(50), email VARCHAR2(100), phone_number VARCHAR2(20), hire_date DATE, job_id VARCHAR2(10), salary NUMBER, commission_pct NUMBER, manager_id NUMBER, department_id NUMBER, MEMBER FUNCTION get_annual_salary RETURN NUMBER); CREATE OR REPLACE TYPE BODY employee_type AS MEMBER FUNCTION get_annual_salary RETURN NUMBER IS BEGIN RETURN self.salary * 12 + NVL(self.salary * self.commission_pct * 12, 0); END; END;"
+      },
+      {
+        "id": 87,
+        "description": "Complex aggregate functions",
+        "oracle_sql": "SELECT department_id, COUNT(*) AS total_employees, SUM(CASE WHEN salary > 5000 THEN 1 ELSE 0 END) AS high_salary_count, AVG(CASE WHEN salary > 5000 THEN salary ELSE NULL END) AS high_salary_avg FROM employees GROUP BY department_id;"
+      },
+      {
+        "id": 88,
+        "description": "Function with CASE statement",
+        "oracle_sql": "CREATE OR REPLACE FUNCTION get_employee_level(p_emp_id IN NUMBER) RETURN VARCHAR2 IS v_level VARCHAR2(20); v_salary employees.salary%TYPE; BEGIN SELECT salary INTO v_salary FROM employees WHERE employee_id = p_emp_id; v_level := CASE WHEN v_salary < 5000 THEN 'Entry Level' WHEN v_salary BETWEEN 5000 AND 10000 THEN 'Mid Level' WHEN v_salary > 10000 THEN 'Senior Level' ELSE 'Unknown' END; RETURN v_level; END;"
+      },
+      {
+        "id": 89,
+        "description": "FIRST_VALUE and LAST_VALUE",
+        "oracle_sql": "SELECT employee_id, department_id, salary, FIRST_VALUE(salary) OVER (PARTITION BY department_id ORDER BY salary DESC) AS highest_dept_salary, LAST_VALUE(salary) OVER (PARTITION BY department_id ORDER BY salary DESC RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS lowest_dept_salary FROM employees;"
+      },
+      {
+        "id": 90,
+        "description": "Package with multiple procedures",
+        "oracle_sql": "CREATE OR REPLACE PACKAGE employee_mgmt AS PROCEDURE hire_employee(p_first_name IN VARCHAR2, p_last_name IN VARCHAR2, p_email IN VARCHAR2, p_job_id IN VARCHAR2, p_salary IN NUMBER, p_department_id IN NUMBER); PROCEDURE terminate_employee(p_emp_id IN NUMBER); FUNCTION get_employee_count(p_dept_id IN NUMBER) RETURN NUMBER; END employee_mgmt;"
+      },
+      {
+        "id": 91,
+        "description": "MONTHS_BETWEEN with division",
+        "oracle_sql": "SELECT employee_id, hire_date, MONTHS_BETWEEN(SYSDATE, hire_date) / 12 AS years_of_service FROM employees;"
+      },
+      {
+        "id": 92,
+        "description": "Trigger for job history",
+        "oracle_sql": "CREATE OR REPLACE TRIGGER update_job_history AFTER UPDATE OF job_id, department_id ON employees FOR EACH ROW BEGIN INSERT INTO job_history (employee_id, start_date, end_date, job_id, department_id) VALUES (:OLD.employee_id, :OLD.hire_date, SYSDATE, :OLD.job_id, :OLD.department_id); END;"
+      },
+      {
+        "id": 93,
+        "description": "STATS_MODE function",
+        "oracle_sql": "SELECT department_id, STATS_MODE(salary) AS most_common_salary FROM employees GROUP BY department_id;"
+      },
+      {
+        "id": 94,
+        "description": "Function with exception handling",
+        "oracle_sql": "CREATE OR REPLACE FUNCTION get_manager_name(p_emp_id IN NUMBER) RETURN VARCHAR2 IS v_manager_name VARCHAR2(100); BEGIN SELECT m.first_name || ' ' || m.last_name INTO v_manager_name FROM employees e JOIN employees m ON e.manager_id = m.employee_id WHERE e.employee_id = p_emp_id; RETURN v_manager_name; EXCEPTION WHEN NO_DATA_FOUND THEN RETURN 'No manager'; END;"
+      },
+      {
+        "id": 95,
+        "description": "RATIO_TO_REPORT with PARTITION",
+        "oracle_sql": "SELECT employee_id, salary, RATIO_TO_REPORT(salary) OVER (PARTITION BY department_id) * 100 AS salary_percentage FROM employees;"
+      },
+      {
+        "id": 96,
+        "description": "Complex PL/SQL procedure",
+        "oracle_sql": "CREATE OR REPLACE PROCEDURE generate_employee_report IS CURSOR emp_cur IS SELECT e.employee_id, e.first_name, e.last_name, e.salary, d.department_name FROM employees e JOIN departments d ON e.department_id = d.department_id ORDER BY d.department_name, e.last_name, e.first_name; v_dept_name VARCHAR2(30) := ''; v_total_salary NUMBER := 0; v_emp_count NUMBER := 0; BEGIN FOR emp_rec IN emp_cur LOOP IF v_dept_name != emp_rec.department_name THEN IF v_dept_name != '' THEN DBMS_OUTPUT.PUT_LINE('Department: ' || v_dept_name); DBMS_OUTPUT.PUT_LINE('Total Employees: ' || v_emp_count); DBMS_OUTPUT.PUT_LINE('Total Salary: $' || TO_CHAR(v_total_salary, '999,999.99')); DBMS_OUTPUT.PUT_LINE('---'); END IF; v_dept_name := emp_rec.department_name; v_total_salary := 0; v_emp_count := 0; END IF; DBMS_OUTPUT.PUT_LINE(emp_rec.employee_id || ': ' || emp_rec.first_name || ' ' || emp_rec.last_name || ' - $' || TO_CHAR(emp_rec.salary, '999,999.99')); v_total_salary := v_total_salary + emp_rec.salary; v_emp_count := v_emp_count + 1; END LOOP; IF v_dept_name != '' THEN DBMS_OUTPUT.PUT_LINE('Department: ' || v_dept_name); DBMS_OUTPUT.PUT_LINE('Total Employees: ' || v_emp_count); DBMS_OUTPUT.PUT_LINE('Total Salary: $' || TO_CHAR(v_total_salary, '999,999.99')); END IF; END;"
+      },
+      {
+        "id": 97,
+        "description": "WIDTH_BUCKET function",
+        "oracle_sql": "SELECT employee_id, salary, WIDTH_BUCKET(salary, 1000, 20000, 5) AS salary_band FROM employees;"
+      },
+      {
+        "id": 98,
+        "description": "Object type with member function",
+        "oracle_sql": "CREATE OR REPLACE TYPE address_type AS OBJECT (street VARCHAR2(100), city VARCHAR2(50), state VARCHAR2(2), zip_code VARCHAR2(10), MEMBER FUNCTION get_full_address RETURN VARCHAR2); CREATE OR REPLACE TYPE BODY address_type AS MEMBER FUNCTION get_full_address RETURN VARCHAR2 IS BEGIN RETURN self.street || ', ' || self.city || ', ' || self.state || ' ' || self.zip_code; END; END;"
+      },
+      {
+        "id": 99,
+        "description": "Complex CASE with REGEXP_LIKE",
+        "oracle_sql": "SELECT employee_id, first_name, last_name, CASE WHEN REGEXP_LIKE(phone_number, '^\\d{3}\\.\\d{3}\\.\\d{4}$') THEN REGEXP_REPLACE(phone_number, '(\\d{3})\\.(\\d{3})\\.(\\d{4})', '(\\1) \\2-\\3') ELSE phone_number END AS formatted_phone FROM employees;"
+      },
+      {
+        "id": 100,
+        "description": "Package body with multiple procedures and functions",
+        "oracle_sql": "CREATE OR REPLACE PACKAGE BODY employee_mgmt AS PROCEDURE hire_employee(p_first_name IN VARCHAR2, p_last_name IN VARCHAR2, p_email IN VARCHAR2, p_job_id IN VARCHAR2, p_salary IN NUMBER, p_department_id IN NUMBER) IS BEGIN INSERT INTO employees (employee_id, first_name, last_name, email, hire_date, job_id, salary, department_id) VALUES (employees_seq.NEXTVAL, p_first_name, p_last_name, p_email, SYSDATE, p_job_id, p_salary, p_department_id); END hire_employee; PROCEDURE terminate_employee(p_emp_id IN NUMBER) IS BEGIN UPDATE employees SET end_date = SYSDATE WHERE employee_id = p_emp_id; INSERT INTO job_history (employee_id, start_date, end_date, job_id, department_id) SELECT employee_id, hire_date, SYSDATE, job_id, department_id FROM employees WHERE employee_id = p_emp_id; DELETE FROM employees WHERE employee_id = p_emp_id; END terminate_employee; FUNCTION get_employee_count(p_dept_id IN NUMBER) RETURN NUMBER IS v_count NUMBER; BEGIN SELECT COUNT(*) INTO v_count FROM employees WHERE department_id = p_dept_id; RETURN v_count; END get_employee_count; END employee_mgmt;"
+      }
+    ]
+}
