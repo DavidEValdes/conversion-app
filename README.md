@@ -31,6 +31,29 @@ END;
 
 ```
 
+## Next Steps:
+
+1. Rule-based approach (Ora2pg): ✅
+    * Implement Ora2pg in your pipeline
+    * No additional data needed
+    * Serves as a baseline for comparison
+2. General-Purpose LLM (API Wrapper):
+    * Set up an API connection to a service like OpenAI's GPT-3
+    * Craft effective prompts for SQL conversion
+    * No additional training data needed
+3. Rule-based/General-purpose Hybrid:
+    * Combine Ora2pg output with LLM 
+    * May require some experimentation to find the best way to combine the two
+4. Knowledge Base Embedding Model:
+    * Requires a dataset of Oracle to PostgreSQL conversions
+    * Need to implement embedding creation and similarity search
+    * Considering using sentence-transformers for embeddings
+5. Domain-Specific Fine-Tuned Model:
+    * Requires a large dataset of Oracle to PostgreSQL conversions
+    * Need access to significant computational resources for training
+    * Considering using Hugging Face's Transformers library 
+
+
 ## License
 
     Copyright [2024] [David Valdes]
