@@ -59,97 +59,97 @@ END;
  
 Automated test harness with comparison functions for near 100% validation:
 
-Full Database Mirroring:
+**Full Database Mirroring:**
 
 Create an exact copy of your Oracle database schema in PostgreSQL.
 Migrate all data from Oracle to PostgreSQL.
 Keep both databases synchronized in real-time or with frequent updates.
 
 
-Exhaustive Query Testing:
+**Exhaustive Query Testing:**
 
 Execute every converted query on both Oracle and PostgreSQL databases.
 Compare results bit-by-bit, including data types, precision, and scale.
 
 
-Transactional Integrity Testing:
+**Transactional Integrity Testing:**
 
 Test multi-statement transactions in both databases.
 Verify that ACID properties are maintained identically.
 
 
-Concurrency and Locking Behavior:
+**Concurrency and Locking Behavior:**
 
 Test concurrent operations to ensure locking mechanisms work similarly.
 Verify isolation levels behave the same in both databases.
 
 
-Performance Profiling:
+**Performance Profiling:**
 
 Compare execution plans and query performance.
 Ensure indexes are used similarly in both databases.
 
 
-Stored Procedure and Function Testing:
+**Stored Procedure and Function Testing:**
 
 Convert and test all stored procedures and functions.
 Verify that they produce identical results and side effects.
 
 
-Trigger Behavior Verification:
+**Trigger Behavior Verification:**
 
 Test all database triggers to ensure they fire under the same conditions.
 Verify that trigger actions produce identical results.
 
 
-Data Type Handling:
+**Data Type Handling:**
 
 Test all data types, especially those with different representations (e.g., DATE, TIMESTAMP).
 Verify that type conversions and comparisons work identically.
 
 
-Null Handling:
+**Null Handling:**
 
 Extensively test NULL value behavior in all contexts.
 
 
-Error Handling and Exceptions:
+**Error Handling and Exceptions:**
 
 Verify that error conditions produce equivalent results.
 Test exception handling in procedural code.
 
 
-Constraint Enforcement:
+**Constraint Enforcement:**
 
 Test all constraints (PRIMARY KEY, FOREIGN KEY, CHECK, UNIQUE) for identical behavior.
 
 
-Sequence and Auto-increment Behavior:
+**Sequence and Auto-increment Behavior:**
 
 Verify that sequence generation and usage is equivalent.
 
 
-Full Text Search Equivalence:
+**Full Text Search Equivalence:**
 
 If used, ensure full-text search capabilities are equivalent.
 
 
-User-Defined Types and Functions:
+**User-Defined Types and Functions:**
 
 Test all user-defined types and functions for equivalent behavior.
 
 
-Permissions and Security:
+**Permissions and Security:**
 
 Verify that user permissions and roles translate correctly.
 
 
-Backup and Recovery:
+**Backup and Recovery:**
 
 Test backup and recovery processes to ensure data integrity is maintained identically.
 
 
-Comprehensive Edge Case Testing:
+**Comprehensive Edge Case Testing:**
 
 Identify and test all possible edge cases in the specific database usage.
 
