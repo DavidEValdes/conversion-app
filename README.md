@@ -1,4 +1,4 @@
-# Oracle 2 Postgres Conversion Dashboard
+# Oracle 2 Postgres Conversion Application
 
 This web app: **Uses "Ora2PG" to convert Oracle to Postgresql code, uses Supabase to validate and return invalid or valid repsonse**
 
