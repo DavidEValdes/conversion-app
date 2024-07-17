@@ -55,9 +55,11 @@ END;
 
 
 
+
+
 ## Execute the converted SQL on an actual PostgreSQL database and compare the results with the original Oracle query
  
-Automated test harness with comparison functions for near 100% validation:
+**Automated test harness with comparison functions for near 100% validation:**
 
 **Full Database Mirroring:**
 
