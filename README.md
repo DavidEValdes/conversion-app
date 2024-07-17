@@ -38,7 +38,7 @@ END;
     * No additional data needed
     * Serves as a baseline for comparison
 2. General-Purpose LLM (API Wrapper):
-    * Set up an API connection to a service like OpenAI's GPT-3
+    * Set up an API connection to a service like OpenAI's GPT
     * Craft effective prompts for SQL conversion
     * No additional training data needed
 3. Rule-based/General-purpose Hybrid:
