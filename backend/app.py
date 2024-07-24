@@ -1,39 +1,50 @@
+import traceback
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from converter import convert_sql, validate_postgres_sql, load_test_queries
+from converter import convert_and_validate, load_test_queries
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
-
-@app.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-    return response
+CORS(app, resources={r"/*": {"origins": "http://localhost:3001"}})
 
 @app.route('/convert', methods=['POST', 'OPTIONS'])
 def convert():
     if request.method == "OPTIONS":
         return jsonify({"status": "OK"}), 200
-    data = request.json
-    oracle_sql_list = data.get('oracle_sql_list', [])
-    
-    results = []
-    for oracle_sql in oracle_sql_list:
-        # Convert Oracle SQL to PostgreSQL
-        postgres_sql = convert_sql(oracle_sql)
+    try:
+        app.logger.info("Received conversion request")
+        data = request.json
+        app.logger.debug(f"Request data: {data}")
+        oracle_sql_list = data.get('oracle_sql_list', [])
         
-        # Validate the converted SQL against Supabase
-        validation_result = validate_postgres_sql(postgres_sql)
+        results = []
+        for oracle_sql in oracle_sql_list:
+            method_results = {}
+            for method in ['rule_based', 'gpt3', 'hybrid']:
+                try:
+                    app.logger.info(f"Converting using method: {method}")
+                    postgres_sql, is_valid, validation_result = convert_and_validate(oracle_sql, method)
+                    method_results[method] = {
+                        'postgres_sql': postgres_sql,
+                        'is_valid': is_valid,
+                        'validation_result': validation_result
+                    }
+                except Exception as method_error:
+                    app.logger.error(f"Error in method {method}: {str(method_error)}")
+                    app.logger.error(traceback.format_exc())
+                    method_results[method] = {
+                        'error': str(method_error)
+                    }
+            results.append({
+                'oracle_sql': oracle_sql,
+                'method_results': method_results
+            })
         
-        results.append({
-            'oracle_sql': oracle_sql,
-            'postgres_sql': postgres_sql,
-            'is_valid': validation_result['is_valid'],
-            'validation_result': validation_result['message']
-        })
-    
-    return jsonify(results)
+        app.logger.info("Conversion completed successfully")
+        return jsonify(results)
+    except Exception as e:
+        app.logger.error(f"An error occurred: {str(e)}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -41,8 +52,13 @@ def health_check():
 
 @app.route('/test-queries', methods=['GET'])
 def get_test_queries():
-    queries = load_test_queries()
-    return jsonify(queries)
+    try:
+        queries = load_test_queries()
+        return jsonify(queries)
+    except Exception as e:
+        app.logger.error(f"Error loading test queries: {str(e)}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=3000)

@@ -6,7 +6,6 @@ function App() {
   const [error, setError] = useState(null);
   const [testQueries, setTestQueries] = useState([]);
   const [selectedQueries, setSelectedQueries] = useState([]);
-  const [convertedQueries, setConvertedQueries] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -24,7 +23,7 @@ function App() {
   const handleConvert = async () => {
     try {
       setError(null);
-      setIsLoading(true); // Set loading state to true
+      setIsLoading(true);
       const queriesToConvert = selectedQueries.map(id => testQueries.find(q => q.id === parseInt(id)).oracle_sql);
 
       const response = await fetch('http://localhost:3000/convert', {
@@ -42,12 +41,11 @@ function App() {
       
       const data = await response.json();
       setConversionResults(data);
-      setConvertedQueries(selectedQueries);  // Update the converted queries
     } catch (error) {
       console.error('Conversion error:', error);
       setError(error.message);
     } finally {
-      setIsLoading(false); // Set loading state to false
+      setIsLoading(false);
     }
   };
 
@@ -56,16 +54,10 @@ function App() {
     setSelectedQueries(selectedOptions);
   };
 
-  const calculateValidPercentage = () => {
+  const calculateValidationRatio = (method) => {
     if (conversionResults.length === 0) return 0;
-    const validCount = conversionResults.filter(result => result.validation_result.includes('SQL is valid')).length;
+    const validCount = conversionResults.filter(result => result.method_results[method].validation_result.includes('SQL is valid')).length;
     return ((validCount / conversionResults.length) * 100).toFixed(2);
-  };
-
-  const calculateInvalidPercentage = () => {
-    if (conversionResults.length === 0) return 0;
-    const invalidCount = conversionResults.filter(result => !result.validation_result.includes('SQL is valid')).length;
-    return ((invalidCount / conversionResults.length) * 100).toFixed(2);
   };
 
   return (
@@ -83,47 +75,51 @@ function App() {
               </option>
             ))}
           </select>
-          <button className="convert-button" onClick={handleConvert} disabled={selectedQueries.length === 0}>
-            Convert Selected Queries
+          <button className="convert-button" onClick={handleConvert} disabled={selectedQueries.length === 0 || isLoading}>
+            {isLoading ? 'Converting...' : 'Convert Selected Queries'}
           </button>
-          <div className="dashboard">
-            <h2>Conversion Dashboard</h2>
-            <p>Valid Queries: {calculateValidPercentage()}%</p>
-            <p>Invalid Queries: {calculateInvalidPercentage()}%</p>
-          </div>
         </div>
         <div className="results-area">
           <h2>Conversion Results</h2>
-          {isLoading ? (
-            <div className="loading">Loading...</div>
-          ) : (
-            conversionResults.map((result, index) => {
-              const query = testQueries.find(q => q.id === parseInt(convertedQueries[index]));
-              return (
-                <div key={index} className="conversion-result">
-                  <h3>Query {convertedQueries[index]}</h3>
-                  {query && <p className="query-description">{query.description}</p>}
-                  <div className="sql-display">
-                    <div className="sql-column">
-                      <h4>Oracle SQL:</h4>
+          {conversionResults.length > 0 && (
+            <div className="validation-ratios">
+              <h3>Validation Ratios:</h3>
+              <p>Rule-based: {calculateValidationRatio('rule_based')}%</p>
+              <p>GPT-3: {calculateValidationRatio('gpt3')}%</p>
+              <p>Hybrid: {calculateValidationRatio('hybrid')}%</p>
+            </div>
+          )}
+          {conversionResults.map((result, index) => (
+            <div key={index} className="conversion-result">
+              <h3>Query {selectedQueries[index]}</h3>
+              <p className="query-description">{testQueries.find(q => q.id === parseInt(selectedQueries[index])).description}</p>
+              <div className="oracle-sql">
+                <h4>Oracle SQL:</h4>
+                <pre>{result.oracle_sql}</pre>
+              </div>
+              {Object.entries(result.method_results).map(([method, methodResult]) => (
+                <div key={method} className="method-result">
+                  <h4>{method.charAt(0).toUpperCase() + method.slice(1)} Method:</h4>
+                  <div className="sql-comparison">
+                    <div className="before">
+                      <h5>Before:</h5>
                       <pre>{result.oracle_sql}</pre>
                     </div>
-                    <div className="sql-column">
-                      <h4>PostgreSQL:</h4>
-                      <pre>{result.postgres_sql}</pre>
+                    <div className="after">
+                      <h5>After:</h5>
+                      <pre>{methodResult.postgres_sql}</pre>
                     </div>
                   </div>
-                  <div className={`validation ${result.validation_result.includes('SQL is valid') ? 'valid' : 'invalid'}`}>
-                    {result.validation_result.includes('SQL is valid') ? 'VALID SQL' : 'Invalid SQL'}
+                  <div className={`validation ${methodResult.validation_result.includes('SQL is valid') ? 'valid' : 'invalid'}`}>
+                    {methodResult.validation_result.includes('SQL is valid') ? 'Valid SQL' : 'Invalid SQL'}
                   </div>
                   <div className="validation-result">
-                    <h4>Validation Result:</h4>
-                    <pre>{result.validation_result.replace(/^Execution error: {'message': /, '').replace(/'}$/, '').replace(/'/g, '')}</pre>
+                    <strong>Validation Result:</strong> {methodResult.validation_result}
                   </div>
                 </div>
-              );
-            })
-          )}
+              ))}
+            </div>
+          ))}
         </div>
       </main>
       {error && <div className="error">Error: {error}</div>}

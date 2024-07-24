@@ -1,7 +1,8 @@
-import subprocess
-import tempfile
 import os
 import json
+import subprocess
+import tempfile
+from openai import OpenAI
 from dotenv import load_dotenv
 from supabase import create_client, Client
 
@@ -13,7 +14,10 @@ url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
-def convert_sql(oracle_sql):
+# Initialize OpenAI client
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+def convert_sql_rule_based(oracle_sql):
     with tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix='.sql') as temp_input:
         temp_input.write(oracle_sql)
         temp_input_path = temp_input.name
@@ -46,24 +50,53 @@ def convert_sql(oracle_sql):
         if os.path.exists(temp_output_path):
             os.unlink(temp_output_path)
 
+def convert_sql_gpt3(oracle_sql):
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that converts Oracle SQL to PostgreSQL."},
+                {"role": "user", "content": f"Convert this Oracle SQL to PostgreSQL and output only the converted SQL code no code blocks:\n\n{oracle_sql}"}
+            ],
+            max_tokens=150,
+            n=1,
+            temperature=0.5,
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        return f"GPT-3 conversion error: {str(e)}"
+
+def convert_sql_hybrid(oracle_sql):
+    rule_based = convert_sql_rule_based(oracle_sql)
+    gpt3_refined = convert_sql_gpt3(f"Refine this PostgreSQL conversion and output only the converted SQL code no code blocks:\n{rule_based}")
+    return gpt3_refined
+
 def validate_postgres_sql(postgres_sql):
     try:
-        # Execute the converted SQL against Supabase
         result = supabase.rpc('validate_sql', {'sql_query': postgres_sql}).execute()
-
-        # Check if the result contains data
-        if result.data and isinstance(result.data, list):
-            if 'error' in result.data[0]:
-                return {'is_valid': False, 'message': result.data[0]['error']}
-            else:
-                return {'is_valid': True, 'message': 'SQL is valid'}
-        elif isinstance(result.data, dict) and 'message' in result.data and result.data['message'] == 'SQL is valid':
-            return {'is_valid': True, 'message': 'SQL is valid'}
-        else:
-            return {'is_valid': False, 'message': 'Unexpected response format'}
+        
+        if result.data and isinstance(result.data, dict):
+            if 'message' in result.data and result.data['message'] == 'SQL is valid':
+                return True, 'SQL is valid'
+            elif 'error' in result.data:
+                return False, result.data['error']
+        
+        return False, "Unexpected response from validation function"
     except Exception as e:
-        # Handle specific database errors
-        return {'is_valid': False, 'message': f"Execution error: {str(e)}"}
+        return False, str(e)
+
+def convert_and_validate(oracle_sql, method='rule_based'):
+    if method == 'rule_based':
+        postgres_sql = convert_sql_rule_based(oracle_sql)
+    elif method == 'gpt3':
+        postgres_sql = convert_sql_gpt3(oracle_sql)
+    elif method == 'hybrid':
+        postgres_sql = convert_sql_hybrid(oracle_sql)
+    else:
+        return None, False, "Invalid method"
+
+    is_valid, validation_result = validate_postgres_sql(postgres_sql)
+    return postgres_sql, is_valid, validation_result
 
 def load_test_queries():
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -73,18 +106,7 @@ def load_test_queries():
     with open(json_path, 'r') as f:
         return json.load(f)
 
-# Test function
+# You can add a main block for testing if needed
 if __name__ == "__main__":
-    # Test conversion
-    oracle_sql = "SELECT * FROM dual"
-    postgres_sql = convert_sql(oracle_sql)
-    print(f"Converted SQL: {postgres_sql}")
-
-    # Test validation
-    validation_result = validate_postgres_sql(postgres_sql)
-    print(f"Is valid: {validation_result['is_valid']}")
-    print(f"Result: {validation_result['message']}")
-
-    # Test loading queries
-    test_queries = load_test_queries()
-    print(f"Loaded {len(test_queries['queries'])} test queries")
+    # Test your functions here
+    pass
