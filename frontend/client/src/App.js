@@ -24,7 +24,9 @@ function App() {
     try {
       setError(null);
       setIsLoading(true);
-      const queriesToConvert = selectedQueries.map(id => testQueries.find(q => q.id === parseInt(id)).oracle_sql);
+      const queriesToConvert = selectedQueries
+        .map(id => testQueries.find(q => q.id === parseInt(id))?.oracle_sql)
+        .filter(sql => sql);
 
       const response = await fetch('http://localhost:3000/convert', {
         method: 'POST',
@@ -60,6 +62,13 @@ function App() {
     return ((validCount / conversionResults.length) * 100).toFixed(2);
   };
 
+  const cleanValidationResult = (result) => {
+    if (typeof result === 'string') {
+      return result.replace(/^\{?'?message'?:\s*'?/, '').replace(/'?\}?$/, '');
+    }
+    return result;
+  };
+
   return (
     <div className="App">
       <header>
@@ -89,37 +98,40 @@ function App() {
               <p>Hybrid: {calculateValidationRatio('hybrid')}%</p>
             </div>
           )}
-          {conversionResults.map((result, index) => (
-            <div key={index} className="conversion-result">
-              <h3>Query {selectedQueries[index]}</h3>
-              <p className="query-description">{testQueries.find(q => q.id === parseInt(selectedQueries[index])).description}</p>
-              <div className="oracle-sql">
-                <h4>Oracle SQL:</h4>
-                <pre>{result.oracle_sql}</pre>
-              </div>
-              {Object.entries(result.method_results).map(([method, methodResult]) => (
-                <div key={method} className="method-result">
-                  <h4>{method.charAt(0).toUpperCase() + method.slice(1)} Method:</h4>
-                  <div className="sql-comparison">
-                    <div className="before">
-                      <h5>Before:</h5>
-                      <pre>{result.oracle_sql}</pre>
-                    </div>
-                    <div className="after">
-                      <h5>After:</h5>
-                      <pre>{methodResult.postgres_sql}</pre>
-                    </div>
-                  </div>
-                  <div className={`validation ${methodResult.validation_result.includes('SQL is valid') ? 'valid' : 'invalid'}`}>
-                    {methodResult.validation_result.includes('SQL is valid') ? 'Valid SQL' : 'Invalid SQL'}
-                  </div>
-                  <div className="validation-result">
-                    <strong>Validation Result:</strong> {methodResult.validation_result}
-                  </div>
+          {conversionResults.map((result, index) => {
+            const selectedQuery = testQueries.find(q => q.id === parseInt(selectedQueries[index]));
+            return (
+              <div key={index} className="conversion-result">
+                <h3>Query {selectedQueries[index]}</h3>
+                <p className="query-description">{selectedQuery?.description || 'No description available'}</p>
+                <div className="oracle-sql">
+                  <h4>Oracle SQL:</h4>
+                  <pre>{result.oracle_sql}</pre>
                 </div>
-              ))}
-            </div>
-          ))}
+                {Object.entries(result.method_results).map(([method, methodResult]) => (
+                  <div key={method} className="method-result">
+                    <h4>{method.charAt(0).toUpperCase() + method.slice(1)} Method:</h4>
+                    <div className="sql-comparison">
+                      <div className="before">
+                        <h5>Before:</h5>
+                        <pre>{result.oracle_sql}</pre>
+                      </div>
+                      <div className="after">
+                        <h5>After:</h5>
+                        <pre>{methodResult.postgres_sql}</pre>
+                      </div>
+                    </div>
+                    <div className={`validation ${methodResult.validation_result.includes('SQL is valid') ? 'valid' : 'invalid'}`}>
+                      {methodResult.validation_result.includes('SQL is valid') ? 'Valid SQL' : 'Invalid SQL'}
+                    </div>
+                    <div className="validation-result">
+                      <strong>Validation Result:</strong> {cleanValidationResult(methodResult.validation_result)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          })}
         </div>
       </main>
       {error && <div className="error">Error: {error}</div>}
