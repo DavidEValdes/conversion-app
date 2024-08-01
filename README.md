@@ -31,27 +31,19 @@ END;
 
 ```
 
-## Next Steps:
+## Testing Methodology:
 
-1. Rule-based approach (Ora2pg): ✅
+1. Rule-based approach (Ora2pg): 
     * Implement Ora2pg in your pipeline
     * No additional data needed
     * Serves as a baseline for comparison
-2. General-Purpose LLM (API Wrapper): ✅
+2. General-Purpose LLM (GPT-3.5-turbo): 
     * Set up an API connection to a service like OpenAI's GPT
     * Craft effective prompts for SQL conversion
     * No additional training data needed
-3. Rule-based/General-purpose Hybrid: ✅
+3. Rule-based/General-purpose Hybrid: 
     * Combine Ora2pg output with LLM 
     * May require some experimentation to find the best way to combine the two
-4. Knowledge Base Embedding Model:
-    * Requires a dataset of Oracle to PostgreSQL conversions
-    * Need to implement embedding creation and similarity search
-    * Considering using sentence-transformers for embeddings
-5. Domain-Specific Fine-Tuned Model:
-    * Requires a large dataset of Oracle to PostgreSQL conversions
-    * Need access to significant computational resources for training
-    * Considering using Hugging Face's Transformers library 
 
 ## License
 
