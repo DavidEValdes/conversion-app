@@ -3,8 +3,6 @@
 This web app: **Uses "Ora2PG" to convert Oracle to Postgresql code, uses Supabase to validate and return invalid or valid repsonse**
 
 
-![Screen Recording 2024-07-16 at 6 05 15 PM](https://github.com/user-attachments/assets/59ac8497-78ba-44c3-a02c-f5d43a42df81)
-
 
 
 ## Current Supabase function used for validation
